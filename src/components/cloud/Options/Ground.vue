@@ -98,6 +98,8 @@ export default {
   },
   methods: {
     init() {
+      //获取选中的分类
+      this.getIndex();
       if (sessionStorage.getItem("Ground")) {
         //如果存在浏览器保存的数据，则直接用
         const Ground = JSON.parse(sessionStorage.getItem("Ground")).Ground;
@@ -115,6 +117,33 @@ export default {
       } else {
         this.getList();
       }
+    },
+    getIndex() {
+      if (sessionStorage.getItem("index")) {
+        const index = JSON.parse(sessionStorage.getItem("index")).index;
+        this.state.activeIndex = index.activeIndex;
+        this.state.moreCategoryIndexActive = index.moreCategoryNextIndexActive;
+        this.state.moreCategoryNextIndexActive =
+          index.moreCategoryNextIndexActive;
+        this.activeCategoryValue = index.activeCategoryValue;
+      }
+    },
+    storeIndex() {
+      //保存选中的分类，防止跳回刷新
+      const index = {
+        activeIndex: this.state.activeIndex,
+        moreCategoryIndexActive: this.state.moreCategoryIndexActive,
+        moreCategoryNextIndexActive: this.state.moreCategoryNextIndexActive,
+        activeCategoryValue: this.activeCategoryValue,
+      };
+      const deadline = 5 * 60 * 1000;
+      sessionStorage.setItem(
+        "index",
+        JSON.stringify({
+          index,
+          deadline,
+        })
+      );
     },
     showCategory: async function () {
       let category = await getMusicListCategory(); //获取更多分类
@@ -143,6 +172,7 @@ export default {
       this.state.moreCategoryNextIndexActive = -1;
       this.activeCategoryValue = value;
       this.getList();
+      this.storeIndex();
     },
     toggleMoreCategory: function (e) {
       e.stopPropagation();
@@ -154,7 +184,6 @@ export default {
         return;
       }
       const moreCategory = document.querySelector(".moreCategory");
-      console.log(111);
       if (moreCategory && !moreCategory.contains(event.target)) {
         this.clickOutside = false;
         this.state.moreCategoryIsShow = !this.state.moreCategoryIsShow;
@@ -169,6 +198,7 @@ export default {
       this.state.activeIndex = -1;
       this.activeCategoryValue = value;
       this.getList();
+      this.storeIndex();
     },
     updatePosition: function () {
       this.position = this.getPosition;
@@ -177,7 +207,6 @@ export default {
       const Lists = await getListsBest(this.activeCategoryValue);
       this.Lists = Lists.data.playlists;
       if (this.Lists.length == 0) {
-        console.log(111);
         const Lists = await getLists(this.activeCategoryValue);
         this.Lists = Lists.data.playlists;
       }

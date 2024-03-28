@@ -31,6 +31,7 @@ export default {
     grid-template-columns: repeat(6,280px);
     grid-template-rows: 330px;
     grid-gap: 20px;
+    padding: 10px 0 20px;
   }
 }
 </style>
