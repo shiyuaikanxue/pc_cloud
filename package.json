@@ -11,8 +11,10 @@
     "axios": "^1.6.7",
     "core-js": "^3.8.3",
     "element-plus": "^2.6.1",
+    "vant": "^4.8.7",
     "vue": "^3.4.21",
     "vue-router": "^4.0.3",
+    "vue3-marquee": "^4.2.0",
     "vuex": "^4.0.0"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 <template>
   <div class="musicList">
-    <Header :info="info"></Header>
+    <Header :info="info" :songList="songList"></Header>
     <Section
       :trackCount="info.trackCount"
       :commentCount="info.commentCount"
@@ -11,11 +11,13 @@
 </template>
 <script>
 import {
+  getMusicListDetail,
   getMusicDetail,
   getMusicListAllSongs,
 } from "@/request/api/musicList.js";
 import Header from "@/components/musicList/Header.vue";
 import Section from "@/components/musicList/Section.vue";
+import { mapMutations, mapState } from "vuex";
 export default {
   data() {
     return {
@@ -43,7 +45,9 @@ export default {
     Header,
     Section,
   },
-  computed: {},
+  computed: {
+    ...mapState(["playlist"]),
+  },
   methods: {
     init() {
       this.getId();
@@ -52,8 +56,9 @@ export default {
     getId() {
       this.id = this.$route.query.id;
     },
+    ...mapMutations(["increasePlaylist"]),
     getMusicInfo: async function () {
-      const res1 = await getMusicDetail(this.id);
+      const res1 = await getMusicListDetail(this.id);
       this.info.coverImgUrl = res1.data.playlist.coverImgUrl; //歌单背景图片
       this.info.createTime = res1.data.playlist.createTime; //歌单创建时间
       this.info.description = res1.data.playlist.description; //歌单描述
@@ -72,6 +77,7 @@ export default {
           name: item.name, //歌曲名
           alia: item.alia, //描述
           dt: item.dt, //歌曲时长
+          id: item.id, //歌曲id
           al: {
             id: item.al.id, //专辑id
             name: item.al.name, //专辑名
@@ -80,7 +86,7 @@ export default {
           ar: item.ar, //作者信息
         };
       });
-      console.log(this.songList)
+      // this.increasePlaylist(this.songList);  //点击歌单，将歌单的列表存入播放列表
     },
   },
   mounted() {

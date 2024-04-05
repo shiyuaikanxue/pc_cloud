@@ -44,7 +44,7 @@
           </span>
         </div>
         <div class="btns" v-if="info.subscribedCount">
-          <div class="playAll">
+          <div class="playAll" @click="playAll()">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-bofang2"></use>
             </svg>
@@ -70,8 +70,9 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex';
 export default {
-  props: ["info"],
+  props: ["info","songList"],
   computed: {
     formatTimestamp() {
       const date = new Date(this.info.createTime);
@@ -81,7 +82,11 @@ export default {
       return `${year}-${month}-${day}`;
     },
   },
-  methods:{
+  methods: {
+    ...mapMutations(["updatePlaylist"]),
+    playAll(){
+      this.updatePlaylist(this.songList)
+    },
     getNum(num) {
       if (num > 100000000) {
         return (num / 100000000).toFixed(2) + "亿";
@@ -89,8 +94,8 @@ export default {
         return (num / 10000).toFixed(2) + "万";
       }
       return num;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -98,6 +103,7 @@ export default {
   width: 100%;
   height: 240px;
   padding: 0 200px;
+  background-color: #f7f9fc;
   .info {
     height: 100%;
     width: 1440px;
